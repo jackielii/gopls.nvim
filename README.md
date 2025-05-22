@@ -25,7 +25,7 @@
       {
         "<leader>kgd",
         function()
-          require('gopls.snacks_picker').doc({show_document = true})
+          require('gopls').doc({show_document = true})
         end,
         desc = "Gopls show documentation",
       },
