@@ -42,3 +42,48 @@ gopls utilities for Neovim. Implements some gopls lsp commands that are not seen
   ![snacks-picker-package-symbols](assets/snacks-picker-package-symbols.png)
 
   You're welcome to add support for another picker by sending a PR
+
+- [ ] gopls.add_dependency
+- [ ] gopls.add_import
+- [ ] gopls.add_telemetry_counters
+- [ ] gopls.add_test
+- [ ] gopls.apply_fix
+- [ ] gopls.assembly
+- [ ] gopls.change_signature
+- [ ] gopls.check_upgrades
+- [ ] gopls.client_open_url
+- [ ] gopls.diagnose_files
+- [ ] gopls.doc
+- [ ] gopls.edit_go_directive
+- [ ] gopls.extract_to_new_file
+- [ ] gopls.fetch_vulncheck_result
+- [ ] gopls.free_symbols
+- [ ] gopls.gc_details
+- [ ] gopls.generate
+- [ ] gopls.go_get_package
+- [ ] gopls.list_imports
+- [ ] gopls.list_known_packages
+- [ ] gopls.maybe_prompt_for_telemetry
+- [ ] gopls.mem_stats
+- [ ] gopls.modify_tags
+- [ ] gopls.modules
+- [ ] gopls.package_symbols
+- [ ] gopls.packages
+- [ ] gopls.regenerate_cgo
+- [ ] gopls.remove_dependency
+- [ ] gopls.reset_go_mod_diagnostics
+- [ ] gopls.run_go_work_command
+- [ ] gopls.run_govulncheck
+- [ ] gopls.run_tests
+- [ ] gopls.scan_imports
+- [ ] gopls.start_debugging
+- [ ] gopls.start_profile
+- [ ] gopls.stop_profile
+- [ ] gopls.tidy
+- [ ] gopls.update_go_sum
+- [ ] gopls.upgrade_dependency
+- [ ] gopls.vendor
+- [ ] gopls.views
+- [ ] gopls.vulncheck
+- [ ] gopls.workspace_stats
+
