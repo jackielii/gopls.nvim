@@ -90,6 +90,9 @@ end
 --- @param with_parent boolean? : Include parent name in the symbol name
 --- @return lsp.DocumentSymbol[]
 M.package_symbols_result_to_symbols = function(result, with_parent)
+  if not result or not result.PackageName or not result.Files or not result.Symbols then
+    return {}
+  end
   return package_symbols_to_symbols(result.PackageName, result.Files, result.Symbols, with_parent)
 end
 

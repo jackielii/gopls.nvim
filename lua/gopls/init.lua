@@ -12,8 +12,8 @@ local function get_gopls_client(bufnr)
   return nil
 end
 
-M.list_known_packages = function(bufnr)
-  bufnr = bufnr or vim.api.nvim_get_current_buf() or 0
+M.list_known_packages = function()
+  local bufnr = vim.api.nvim_get_current_buf() or 0
   local gopls = get_gopls_client(bufnr)
   if not gopls then
     return
@@ -143,7 +143,6 @@ M.doc = function(opts)
       },
     },
   }
-
 
   gopls:exec_cmd(params, { bufnr = bufnr }, function(err, result)
     if err then
