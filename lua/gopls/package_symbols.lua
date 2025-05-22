@@ -51,7 +51,7 @@ local M = {}
 --- @param files lsp.DocumentUri[]
 --- @param symbols PackageSymbol[]
 --- @return lsp.DocumentSymbol[]
-local function package_symbols_to_symbols(parent, files, symbols)
+local function package_symbols_to_symbols(parent, files, symbols, with_parent)
   local result = {}
   for _, symbol in ipairs(symbols) do
     local doc_symbol = {
@@ -72,9 +72,12 @@ local function package_symbols_to_symbols(parent, files, symbols)
     }
 
     if symbol.children and #symbol.children > 0 then
-      doc_symbol.children = package_symbols_to_symbols(doc_symbol.name, files, symbol.children)
+      doc_symbol.children =
+        package_symbols_to_symbols(string.format("%s.%s", parent, doc_symbol.name), files, symbol.children, with_parent)
     end
-
+    if with_parent then
+      doc_symbol.name = string.format("%s.%s", parent, symbol.name)
+    end
     table.insert(result, doc_symbol)
   end
 
@@ -82,9 +85,10 @@ local function package_symbols_to_symbols(parent, files, symbols)
 end
 
 --- @param result PackageSymbolsResult
+--- @param with_parent boolean? : Include parent name in the symbol name
 --- @return lsp.DocumentSymbol[]
-M.package_symbols_result_to_symbols = function(result)
-  return package_symbols_to_symbols(result.PackageName, result.Files, result.Symbols)
+M.package_symbols_result_to_symbols = function(result, with_parent)
+  return package_symbols_to_symbols(result.PackageName, result.Files, result.Symbols, with_parent)
 end
 
 return M
