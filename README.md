@@ -16,12 +16,11 @@ gopls utilities for Neovim
   }
 ```
 
-![list-known-packages](assets/list-known-packages.png)
-Upon selecting an item, a new import statement will be inserted
-
 
 ## Features
-- [ ] gopls.list_known_packages
-- [ ] gopls.package_symbols
+- [x] gopls.list_known_packages
+  ![list-known-packages](assets/list-known-packages.png)
+  Upon selecting an item, a new import statement will be inserted
+- [x] gopls.package_symbols
 
 
