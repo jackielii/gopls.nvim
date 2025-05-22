@@ -61,14 +61,16 @@ local function package_symbols_to_symbols(parent, files, symbols, with_parent)
       kind = symbol.kind,
       tags = symbol.tags,
       range = symbol.range,
+
+      -- selectionRange = symbol.selectionRange,
+      -- here we use location instead of selectionRange, why?
+      -- DocumentSymbol is only for a single file, but it has children which our PackageSymbol also contains
+      -- here we combined the DocumentSymbol and SymbolInformation check vim.lsp.util.symbols_to_items for details
+      uri = files[(symbol.file or 0) + 1], -- file is 0-indexed
       location = {
-        -- here we use location instead of selectionRange, why?
-        -- DocumentSymbol is only for a single file, but it has children which our PackageSymbol also contains
-        -- here we combined the DocumentSymbol and SymbolInformation check vim.lsp.util.symbols_to_items for details
         uri = files[(symbol.file or 0) + 1], -- file is 0-indexed
         range = symbol.selectionRange,
       },
-      -- selectionRange = symbol.selectionRange,
     }
 
     if symbol.children and #symbol.children > 0 then

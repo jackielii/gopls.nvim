@@ -1,6 +1,7 @@
 local Mod = {}
 
----@param opts snacks.picker.lsp.symbols.Config
+---Copied from https://github.com/folke/snacks.nvim/blob/main/lua/snacks/picker/source/lsp/init.lua#L298-L390
+---@param opts gopls.snacks_picker.list_package_symbols.Config
 ---@type snacks.picker.finder
 Mod.package_symbols_finder = function(opts, ctx)
   local M = require("snacks.picker.source.lsp")
@@ -46,7 +47,7 @@ Mod.package_symbols_finder = function(opts, ctx)
   -- local method = opts.workspace and "workspace/symbol" or "textDocument/documentSymbol"
   -- local p = opts.workspace and { query = ctx.filter.search }
   --   or { textDocument = vim.lsp.util.make_text_document_params(buf) }
-  --- NOTE: CHANGED
+  --- NOTE: CHANGED: use gopls.package_symbols instead of workspace/symbol
   local method = vim.lsp.protocol.Methods.workspace_executeCommand
   local p = {
     command = "gopls.package_symbols",
@@ -61,8 +62,8 @@ Mod.package_symbols_finder = function(opts, ctx)
     M.request(buf, method, function()
       return p
     end, function(client, result, params)
-      --- NOTE: ADDED
-      local symbols = require("gopls.package_symbols").package_symbols_result_to_symbols(result)
+      --- NOTE: ADDED: convert package symbols results to symbols
+      local symbols = require("gopls.package_symbols").package_symbols_result_to_symbols(result, opts.with_parent)
 
       local items = M.results_to_items(client, symbols, {
         default_uri = params.textDocument and params.textDocument.uri or nil,
@@ -73,14 +74,15 @@ Mod.package_symbols_finder = function(opts, ctx)
       })
 
       -- Fix sorting
-      if not opts.workspace then
-        table.sort(items, function(a, b)
-          if a.pos[1] == b.pos[1] then
-            return a.pos[2] < b.pos[2]
-          end
-          return a.pos[1] < b.pos[1]
-        end)
-      end
+      -- NOTE: CHANGED: disable sorting
+      -- if not opts.workspace then
+      --   table.sort(items, function(a, b)
+      --     if a.pos[1] == b.pos[1] then
+      --       return a.pos[2] < b.pos[2]
+      --     end
+      --     return a.pos[1] < b.pos[1]
+      --   end)
+      -- end
 
       -- fix last
       local last = {} ---@type table<snacks.picker.finder.Item, snacks.picker.finder.Item>
@@ -106,12 +108,15 @@ Mod.package_symbols_finder = function(opts, ctx)
   end
 end
 
-Mod.list_package_symbols = function()
-  local opts = require("snacks.picker.config.sources").lsp_symbols
-  opts = vim.tbl_deep_extend("force", opts, {
+---@class gopls.snacks_picker.list_package_symbols.Config : snacks.picker.lsp.symbols.Config
+--- @field with_parent boolean? : Include parent name in the symbol name
+
+---@param opts gopls.snacks_picker.list_package_symbols.Config
+Mod.list_package_symbols = function(opts)
+  opts = vim.tbl_deep_extend("force", require("snacks.picker.config.sources").lsp_symbols, {
     title = "Package Symbols",
     finder = Mod.package_symbols_finder,
-  })
+  }, opts or {})
   require("snacks.picker").pick(opts)
 end
 
