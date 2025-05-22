@@ -13,14 +13,21 @@ gopls utilities for Neovim. Implements some gopls lsp commands that are not seen
         function()
           require("gopls").list_known_packages({with_parent = true, loclist = true})
         end,
-        desc = "List known packages",
+        desc = "Gopls list known packages",
       },
       {
         "<leader>kgp",
         function()
           require('gopls.snacks_picker').list_package_symbols({with_parent = true})
         end,
-        desc = "List package symbols",
+        desc = "Gopls list package symbols",
+      },
+      {
+        "<leader>kgd",
+        function()
+          require('gopls.snacks_picker').doc({show_document = true})
+        end,
+        desc = "Gopls show documentation",
       },
     }
   }
@@ -43,6 +50,12 @@ gopls utilities for Neovim. Implements some gopls lsp commands that are not seen
 
   You're welcome to add support for another picker by sending a PR
 
+- [x] gopls.doc
+
+  Show documentation for the symbol under cursor. If `opts.show_document=true`, it will open a browser window,
+  otherwise it will copy the url to clipboard
+
+
 - [ ] gopls.add_dependency
 - [ ] gopls.add_import
 - [ ] gopls.add_telemetry_counters
@@ -53,7 +66,6 @@ gopls utilities for Neovim. Implements some gopls lsp commands that are not seen
 - [ ] gopls.check_upgrades
 - [ ] gopls.client_open_url
 - [ ] gopls.diagnose_files
-- [ ] gopls.doc
 - [ ] gopls.edit_go_directive
 - [ ] gopls.extract_to_new_file
 - [ ] gopls.fetch_vulncheck_result
@@ -62,12 +74,10 @@ gopls utilities for Neovim. Implements some gopls lsp commands that are not seen
 - [ ] gopls.generate
 - [ ] gopls.go_get_package
 - [ ] gopls.list_imports
-- [ ] gopls.list_known_packages
 - [ ] gopls.maybe_prompt_for_telemetry
 - [ ] gopls.mem_stats
 - [ ] gopls.modify_tags
 - [ ] gopls.modules
-- [ ] gopls.package_symbols
 - [ ] gopls.packages
 - [ ] gopls.regenerate_cgo
 - [ ] gopls.remove_dependency

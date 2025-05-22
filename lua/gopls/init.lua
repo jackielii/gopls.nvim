@@ -119,4 +119,45 @@ M.list_package_symbols = function(opts)
   end)
 end
 
+--- @class gopls.doc.Config
+--- @field show_document boolean? : Show the document in a browser window or copy to clipboard
+
+--- @param opts? gopls.doc.Config
+M.doc = function(opts)
+  opts = opts or {}
+  local bufnr = vim.api.nvim_get_current_buf() or 0
+  local range = vim.lsp.util.make_range_params()
+  local params = {
+    command = "gopls.doc",
+    arguments = {
+      {
+        Location = {
+          uri = range.textDocument.uri,
+          range = range.range,
+        },
+        ShowDocument = opts.show_document or false,
+      },
+    },
+  }
+
+  local gopls = get_gopls_client(bufnr)
+  if not gopls then
+    return
+  end
+
+  gopls:exec_cmd(params, { bufnr = bufnr }, function(err, result)
+    if err then
+      vim.notify("Error running gopls.doc: " .. err.message, vim.log.levels.ERROR)
+      return
+    end
+    if opts.show_document then
+      vim.notify("Gopls doc opened in browser.", vim.log.levels.INFO)
+    else
+      -- copy result to clipboard
+      vim.fn.setreg("+", result)
+      vim.notify("Gopls doc URL copied to clipboard.", vim.log.levels.INFO)
+    end
+  end)
+end
+
 return M

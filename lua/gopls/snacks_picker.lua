@@ -109,7 +109,7 @@ Mod.package_symbols_finder = function(opts, ctx)
 end
 
 ---@class gopls.snacks_picker.list_package_symbols.Config : snacks.picker.lsp.symbols.Config
---- @field with_parent boolean? : Include parent name in the symbol name
+---@field with_parent boolean? : Include parent name in the symbol name
 
 ---@param opts gopls.snacks_picker.list_package_symbols.Config
 Mod.list_package_symbols = function(opts)
