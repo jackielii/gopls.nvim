@@ -1,6 +1,6 @@
 # gopls.nvim
 
-gopls utilities for Neovim. Implements some gopls lsp commands that are not seen in other plugins
+`gopls` exposes many commands via `workspace/executeCommand` which is not readily available through lsp clients. This repo implements a few of them to make your life easier.
 
 ## Install 
 
