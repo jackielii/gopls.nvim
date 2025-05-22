@@ -63,10 +63,13 @@ gopls utilities for Neovim. Implements some gopls lsp commands that are not seen
 
   Run `go mod vendor`.
 
+- [x] gopls.add_test
+
+  Add a test function for the function under cursor.
+
 - [ ] gopls.add_dependency
 - [ ] gopls.add_import
 - [ ] gopls.add_telemetry_counters
-- [ ] gopls.add_test
 - [ ] gopls.apply_fix
 - [ ] gopls.assembly
 - [ ] gopls.change_signature

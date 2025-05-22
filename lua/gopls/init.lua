@@ -126,7 +126,11 @@ end
 M.doc = function(opts)
   opts = opts or {}
   local bufnr = vim.api.nvim_get_current_buf() or 0
-  local range = vim.lsp.util.make_range_params()
+  local gopls = get_gopls_client(bufnr)
+  if not gopls then
+    return
+  end
+  local range = vim.lsp.util.make_range_params(0, gopls.offset_encoding)
   local params = {
     command = "gopls.doc",
     arguments = {
@@ -140,10 +144,6 @@ M.doc = function(opts)
     },
   }
 
-  local gopls = get_gopls_client(bufnr)
-  if not gopls then
-    return
-  end
 
   gopls:exec_cmd(params, { bufnr = bufnr }, function(err, result)
     if err then
@@ -162,17 +162,16 @@ end
 
 M.tidy = function()
   local bufnr = vim.api.nvim_get_current_buf() or 0
+  local gopls = get_gopls_client(bufnr)
+  if not gopls then
+    return
+  end
   local params = {
     command = "gopls.tidy",
     arguments = {
       { URIs = { vim.uri_from_bufnr(bufnr) } },
     },
   }
-
-  local gopls = get_gopls_client(bufnr)
-  if not gopls then
-    return
-  end
 
   gopls:exec_cmd(params, { bufnr = bufnr }, function(err, result)
     if err then
@@ -185,6 +184,10 @@ end
 
 M.vendor = function()
   local bufnr = vim.api.nvim_get_current_buf() or 0
+  local gopls = get_gopls_client(bufnr)
+  if not gopls then
+    return
+  end
   local params = {
     command = "gopls.vendor",
     arguments = {
@@ -192,17 +195,40 @@ M.vendor = function()
     },
   }
 
-  local gopls = get_gopls_client(bufnr)
-  if not gopls then
-    return
-  end
-
   gopls:exec_cmd(params, { bufnr = bufnr }, function(err, result)
     if err then
       vim.notify("Error running gopls.vendor: " .. err.message, vim.log.levels.ERROR)
     else
       vim.notify("Gopls vendor completed.", vim.log.levels.INFO)
     end
+  end)
+end
+
+M.add_test = function()
+  local bufnr = vim.api.nvim_get_current_buf() or 0
+  local gopls = get_gopls_client(bufnr)
+  if not gopls then
+    return
+  end
+
+  local range = vim.lsp.util.make_range_params(0, gopls.offset_encoding)
+  local params = {
+    command = "gopls.add_test",
+    arguments = {
+      {
+        uri = range.textDocument.uri,
+        range = range.range,
+      },
+    },
+  }
+
+  gopls:exec_cmd(params, { bufnr = bufnr }, function(err, result)
+    if err then
+      vim.notify("Error running gopls.add_test: " .. err.message, vim.log.levels.ERROR)
+      return
+    end
+    -- vim.lsp.util.apply_workspace_edit(result.Edit)
+    vim.notify("Gopls add_test completed.", vim.log.levels.INFO)
   end)
 end
 
