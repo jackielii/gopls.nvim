@@ -55,6 +55,13 @@ gopls utilities for Neovim. Implements some gopls lsp commands that are not seen
   Show documentation for the symbol under cursor. If `opts.show_document=true`, it will open a browser window,
   otherwise it will copy the url to clipboard
 
+- [x] gopls.tidy
+
+  Run `go mod tidy`.
+
+- [x] gopls.vendor
+
+  Run `go mod vendor`.
 
 - [ ] gopls.add_dependency
 - [ ] gopls.add_import
@@ -89,10 +96,8 @@ gopls utilities for Neovim. Implements some gopls lsp commands that are not seen
 - [ ] gopls.start_debugging
 - [ ] gopls.start_profile
 - [ ] gopls.stop_profile
-- [ ] gopls.tidy
 - [ ] gopls.update_go_sum
 - [ ] gopls.upgrade_dependency
-- [ ] gopls.vendor
 - [ ] gopls.views
 - [ ] gopls.vulncheck
 - [ ] gopls.workspace_stats

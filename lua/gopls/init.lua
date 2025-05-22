@@ -160,4 +160,50 @@ M.doc = function(opts)
   end)
 end
 
+M.tidy = function()
+  local bufnr = vim.api.nvim_get_current_buf() or 0
+  local params = {
+    command = "gopls.tidy",
+    arguments = {
+      { URIs = { vim.uri_from_bufnr(bufnr) } },
+    },
+  }
+
+  local gopls = get_gopls_client(bufnr)
+  if not gopls then
+    return
+  end
+
+  gopls:exec_cmd(params, { bufnr = bufnr }, function(err, result)
+    if err then
+      vim.notify("Error running gopls.tidy: " .. err.message, vim.log.levels.ERROR)
+    else
+      vim.notify("Gopls tidy completed.", vim.log.levels.INFO)
+    end
+  end)
+end
+
+M.vendor = function()
+  local bufnr = vim.api.nvim_get_current_buf() or 0
+  local params = {
+    command = "gopls.vendor",
+    arguments = {
+      { URIs = { vim.uri_from_bufnr(bufnr) } },
+    },
+  }
+
+  local gopls = get_gopls_client(bufnr)
+  if not gopls then
+    return
+  end
+
+  gopls:exec_cmd(params, { bufnr = bufnr }, function(err, result)
+    if err then
+      vim.notify("Error running gopls.vendor: " .. err.message, vim.log.levels.ERROR)
+    else
+      vim.notify("Gopls vendor completed.", vim.log.levels.INFO)
+    end
+  end)
+end
+
 return M
