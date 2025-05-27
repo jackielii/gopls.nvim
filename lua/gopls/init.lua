@@ -231,4 +231,56 @@ M.add_test = function()
   end)
 end
 
+--- @param opts? gopls.go_get_package.Config
+--- @class gopls.go_get_package.Config
+--- @field add_require boolean? : Whether to add the package to go.mod as a require statement
+--- @field import_path string? : The import path of the package to get
+M.go_get_package = function(opts)
+  opts = vim.tbl_deep_extend("keep", opts or {}, { add_require = true })
+  local bufnr = vim.api.nvim_get_current_buf() or 0
+  local gopls = get_gopls_client(bufnr)
+  if not gopls then
+    return
+  end
+
+  local input
+  if opts.import_path then
+    -- If import_path is provided, use it directly
+    input = function(_, callback)
+      callback(opts.import_path)
+    end
+  else
+    -- Otherwise, prompt the user for input
+    input = function(prompt, callback)
+      vim.ui.input({ prompt = prompt }, callback)
+    end
+  end
+
+  input("Enter package import path: ", function(import_path)
+    -- trim whitespace from the input
+    import_path = import_path:match("^%s*(.-)%s*$")
+    -- trim surrounding quotes if present
+    import_path = import_path:gsub('^"(.-)"$', "%1"):gsub("^'(.-)'$", "%1")
+
+    if not import_path or import_path == "" then
+      vim.notify("No import path provided.", vim.log.levels.WARN)
+      return
+    end
+
+    local params = {
+      command = "gopls.go_get_package",
+      arguments = {
+        { URI = vim.uri_from_bufnr(bufnr), Pkg = import_path, AddRequire = opts.add_require },
+      },
+    }
+
+    gopls:exec_cmd(params, { bufnr = bufnr }, function(err, result)
+      if err then
+        vim.notify("Error running gopls.go_get_package: " .. err.message, vim.log.levels.ERROR)
+        return
+      end
+    end)
+  end)
+end
+
 return M

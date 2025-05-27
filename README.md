@@ -67,6 +67,10 @@
 
   Add a test function for the function under cursor.
 
+- [x] gopls.go_get_package
+
+  Go get a new package
+
 - [ ] gopls.add_dependency
 - [ ] gopls.add_import
 - [ ] gopls.add_telemetry_counters
@@ -82,7 +86,6 @@
 - [ ] gopls.free_symbols
 - [ ] gopls.gc_details
 - [ ] gopls.generate
-- [ ] gopls.go_get_package
 - [ ] gopls.list_imports
 - [ ] gopls.maybe_prompt_for_telemetry
 - [ ] gopls.mem_stats
