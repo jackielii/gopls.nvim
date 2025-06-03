@@ -71,6 +71,23 @@
 
   Go get a new package
 
+- [x] gopls.diagnose_files
+
+  Run diagnose on files in the current workspace. This is useful when you have external command that changed go files and gopls is unaware of it.
+
+  Example: when a `.templ` file changes, you want to diagnose the `_templ.go` files that are generated.
+
+  ```lua
+  vim.api.nvim_create_autocmd("BufWritePost", {
+    pattern = "*.templ",
+    callback = function(args)
+      local templ_file = args.file
+      local go_file = templ_file:gsub("%.templ$", "_templ.go")
+      require('gopls').diagnose_files(go_file)
+    end,
+  })
+  ```
+
 - [ ] gopls.add_dependency
 - [ ] gopls.add_import
 - [ ] gopls.add_telemetry_counters
@@ -79,7 +96,6 @@
 - [ ] gopls.change_signature
 - [ ] gopls.check_upgrades
 - [ ] gopls.client_open_url
-- [ ] gopls.diagnose_files
 - [ ] gopls.edit_go_directive
 - [ ] gopls.extract_to_new_file
 - [ ] gopls.fetch_vulncheck_result

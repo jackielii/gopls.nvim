@@ -283,4 +283,30 @@ M.go_get_package = function(opts)
   end)
 end
 
+M.diagnose_files = function(...)
+  if #... == 0 then
+    vim.notify("No files provided for gopls.diagnose_files", vim.log.levels.WARN)
+    return
+  end
+  local gopls = get_gopls_client(nil)
+  if not gopls then
+    return
+  end
+  local uris = {}
+  for _, fname in ipairs({ ... }) do
+    table.insert(uris, vim.uri_from_fname(fname))
+  end
+  local params = {
+    command = "gopls.diagnose_files",
+    arguments = { { Files = uris } },
+  }
+  gopls:exec_cmd(params, {}, function(err, result)
+    if err then
+      vim.notify("Error reloading file: " .. err.message, vim.log.levels.ERROR)
+    else
+      vim.notify("Notified gopls for " .. uris[1])
+    end
+  end)
+end
+
 return M
