@@ -235,6 +235,7 @@ end
 --- @class gopls.go_get_package.Config
 --- @field add_require boolean? : Whether to add the package to go.mod as a require statement
 --- @field import_path string? : The import path of the package to get
+--- @field add_import boolean? : Whether to add the import to the current file
 M.go_get_package = function(opts)
   opts = vim.tbl_deep_extend("keep", opts or {}, { add_require = true })
   local bufnr = vim.api.nvim_get_current_buf() or 0
@@ -279,6 +280,10 @@ M.go_get_package = function(opts)
         vim.notify("Error running gopls.go_get_package: " .. err.message, vim.log.levels.ERROR)
         return
       end
+
+      if opts.add_import then
+        M.add_import(import_path)
+      end
     end)
   end)
 end
@@ -305,6 +310,47 @@ M.diagnose_files = function(...)
       vim.notify("Error reloading file: " .. err.message, vim.log.levels.ERROR)
     else
       vim.notify("Notified gopls for " .. uris[1])
+    end
+  end)
+end
+
+-- type AddImportArgs struct {
+-- 	// ImportPath is the target import path that should
+-- 	// be added to the URI file
+-- 	ImportPath string
+-- 	// URI is the file that the ImportPath should be
+-- 	// added to
+-- 	URI protocol.DocumentURI
+-- }
+M.add_import = function(import_path)
+  local bufnr = vim.api.nvim_get_current_buf() or 0
+  local gopls = get_gopls_client(bufnr)
+  if not gopls then
+    return
+  end
+
+  if not import_path or import_path == "" then
+    vim.notify("No import path provided.", vim.log.levels.WARN)
+    return
+  end
+
+  local params = {
+    command = "gopls.add_import",
+    arguments = {
+      { ImportPath = import_path, URI = vim.uri_from_bufnr(bufnr) },
+    },
+  }
+
+  gopls:exec_cmd(params, { bufnr = bufnr }, function(err, result)
+    if err then
+      vim.notify("Error running gopls.add_import: " .. err.message, vim.log.levels.ERROR)
+      return
+    end
+
+    if result and result.success then
+      vim.notify("Import added successfully.", vim.log.levels.INFO)
+    else
+      vim.notify("Failed to add import.", vim.log.levels.ERROR)
     end
   end)
 end

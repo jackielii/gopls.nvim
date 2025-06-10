@@ -69,7 +69,12 @@
 
 - [x] gopls.go_get_package
 
-  Go get a new package
+  Go get a new package. Optionally add require to go.mod and import to the current file.
+
+  ```lua
+  function()
+    require("gopls").go_get_package({ add_require = true, add_import = true })
+  end,
 
 - [x] gopls.diagnose_files
 
@@ -88,8 +93,11 @@
   })
   ```
 
+- [x] gopls.add_import
+
+  Add an import statement to the current file. This is useful to use with other functions like go_get
+
 - [ ] gopls.add_dependency
-- [ ] gopls.add_import
 - [ ] gopls.add_telemetry_counters
 - [ ] gopls.apply_fix
 - [ ] gopls.assembly
