@@ -121,6 +121,7 @@ end
 
 --- @class gopls.doc.Config
 --- @field show_document boolean? : Show the document in a browser window or copy to clipboard
+--- @field show_gopkg boolean? : Show the documentation in https://pkg.go.dev/
 
 --- @param opts? gopls.doc.Config
 M.doc = function(opts)
@@ -144,6 +145,25 @@ M.doc = function(opts)
     },
   }
 
+  local function convert_gopls_url(url)
+    -- Strip the query string (everything after ? but before #)
+    local base = url:match("^[^%?]+") or url
+
+    -- Extract fragment if present
+    local fragment = url:match("#(.+)$")
+    fragment = fragment and ("#" .. fragment) or ""
+
+    -- Extract Go package path after /pkg/
+    local path = base:match("/pkg/(.+)")
+    if not path then
+      vim.notify("gopls.doc: No valid package path found in URL: " .. url, vim.log.levels.WARN)
+      return nil
+    end
+
+    -- Compose pkg.go.dev URL
+    return "https://pkg.go.dev/" .. path .. fragment
+  end
+
   gopls:exec_cmd(params, { bufnr = bufnr }, function(err, result)
     if err then
       vim.notify("Error running gopls.doc: " .. err.message, vim.log.levels.ERROR)
@@ -151,6 +171,9 @@ M.doc = function(opts)
     end
     if opts.show_document then
       vim.notify("Gopls doc opened in browser.", vim.log.levels.INFO)
+    elseif opts.show_gopkg then
+      local url = convert_gopls_url(result)
+      M.client_open_url(url)
     else
       -- copy result to clipboard
       vim.fn.setreg("+", result)
@@ -351,6 +374,30 @@ M.add_import = function(import_path)
       vim.notify("Import added successfully.", vim.log.levels.INFO)
     else
       vim.notify("Failed to add import.", vim.log.levels.ERROR)
+    end
+  end)
+end
+
+M.client_open_url = function(url)
+  if not url or url == "" then
+    vim.notify("gopls.client_open_url: No URL provided.", vim.log.levels.WARN)
+    return
+  end
+
+  local bufnr = vim.api.nvim_get_current_buf() or 0
+  local gopls = get_gopls_client(bufnr)
+  if not gopls then
+    return
+  end
+
+  local params = {
+    command = "gopls.client_open_url",
+    arguments = { url },
+  }
+  gopls:exec_cmd(params, { bufnr = bufnr }, function(err, result)
+    if err then
+      vim.notify("Error running gopls.client_open_url: " .. err.message, vim.log.levels.ERROR)
+      return
     end
   end)
 end

@@ -55,6 +55,12 @@
   Show documentation for the symbol under cursor. If `opts.show_document=true`, it will open a browser window,
   otherwise it will copy the url to clipboard
 
+  As an extension, you can request the symbol doc at pkg.go.dev by setting `show_gopkg = true` in the opts:
+
+  ```lua
+  require('gopls').doc({ show_gopkg = true })
+  ```
+
 - [x] gopls.tidy
 
   Run `go mod tidy`.
@@ -97,13 +103,16 @@
 
   Add an import statement to the current file. This is useful to use with other functions like go_get
 
+- [x] gopls.client_open_url
+
+  Request the lsp client to open a URL, if client supports it. This is useful for opening documentation URLs.
+
 - [ ] gopls.add_dependency
 - [ ] gopls.add_telemetry_counters
 - [ ] gopls.apply_fix
 - [ ] gopls.assembly
 - [ ] gopls.change_signature
 - [ ] gopls.check_upgrades
-- [ ] gopls.client_open_url
 - [ ] gopls.edit_go_directive
 - [ ] gopls.extract_to_new_file
 - [ ] gopls.fetch_vulncheck_result
