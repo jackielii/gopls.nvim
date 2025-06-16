@@ -48,24 +48,7 @@ M.list_known_packages = function()
         return
       end
 
-      local params = {
-        command = "gopls.add_import",
-        arguments = {
-          { uri = vim.uri_from_bufnr(bufnr), ImportPath = selected },
-        },
-      }
-      gopls:exec_cmd(params, { bufnr = bufnr }, function(err, result)
-        if err then
-          vim.notify("Error adding import: " .. err.message, vim.log.levels.ERROR)
-          return
-        end
-
-        if result and result.success then
-          vim.notify("Import added successfully.", vim.log.levels.INFO)
-        else
-          vim.notify("Failed to add import.", vim.log.levels.ERROR)
-        end
-      end)
+      M.add_import(selected)
     end)
   end)
 end
@@ -281,6 +264,14 @@ M.go_get_package = function(opts)
   end
 
   input("Enter package import path: ", function(import_path)
+    -- trim "go get" string if present
+    if not import_path then
+      vim.notify("No import path provided.", vim.log.levels.WARN)
+      return
+    end
+    if import_path:match("^go%s+get%s+") then
+      import_path = import_path:gsub("^go%s+get%s+", "")
+    end
     -- trim whitespace from the input
     import_path = import_path:match("^%s*(.-)%s*$")
     -- trim surrounding quotes if present
@@ -368,12 +359,6 @@ M.add_import = function(import_path)
     if err then
       vim.notify("Error running gopls.add_import: " .. err.message, vim.log.levels.ERROR)
       return
-    end
-
-    if result and result.success then
-      vim.notify("Import added successfully.", vim.log.levels.INFO)
-    else
-      vim.notify("Failed to add import.", vim.log.levels.ERROR)
     end
   end)
 end
